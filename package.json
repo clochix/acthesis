@@ -1,0 +1,23 @@
+{
+  "name": "Acthesis",
+  "version": "0.0.0",
+  "description": " A prothesis (polyfill) for Web user agent currently not suporting Web Activities ",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.9.2",
+    "express": "^4.10.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clochix/acthesis.git"
+  },
+  "author": "Clochix",
+  "license": "AGPL v3",
+  "bugs": {
+    "url": "https://github.com/clochix/acthesis/issues"
+  }
+}
