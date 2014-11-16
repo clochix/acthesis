@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+  <meta charset=utf-8>
+  <meta name="description" content="Acthesis test">
+  <title>Acthesis test</title>
+</head>
+<body>
+  <button id="action">Share</button>
+  <script src="activity-common.js"></script>
+  <script src="activity-client.js"></script>
+  <script>
+window.addEventListener('load', function () {
+  if (typeof window.MozActivity === 'undefined') {
+    var acthesis, options, description;
+    var activityUrl = window.location.protocol + "//" + window.location.host + "/#activity/share"
+    options = {
+      server: window.location.protocol + "//" + window.location.host + "/activity"
+    };
+    acthesis = new Acthesis(options);
+    acthesis.start();
+  }
+  document.getElementById('action').addEventListener('click', function () {
+    var activity = new MozActivity({
+      name: "share",
+      data: {
+        url: "http://clochix.net"
+      }
+    });
+    activity.onsuccess = function() {
+      console.log("Activity successfuly handled");
+    }
+    activity.onerror = function() {
+      console.log("The activity encouter en error: " + this.error);
+    }
+  });
+});
+  </script>
+</body>
+</html>
+

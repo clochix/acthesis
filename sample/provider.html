@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+  <meta charset=utf-8>
+  <meta name="description" content="Acthesis test">
+  <title>Acthesis test</title>
+</head>
+<body>
+  <script src="activity-common.js"></script>
+  <script src="activity-client.js"></script>
+  <script>
+window.addEventListener('load', function () {
+  if (typeof window.MozActivity === 'undefined') {
+    var acthesis, options, description;
+    var activityUrl = window.location.toString().split(/[\?#]/)[0];
+    options = {
+      server: window.location.protocol + "//" + window.location.host + "/activity"
+    };
+    acthesis = new Acthesis(options);
+    description = new ActivityHandlerDescription('share', activityUrl, '', false, null);
+    acthesis.registerActivityHandler(description);
+    navigator.setMessageHandler('share', function (a) {
+      "use strict";
+      console.log("Sharing", a);
+      a.postResult(a.source);
+    });
+    acthesis.start();
+  }
+  console.log(navigator.mozHasPendingMessage('share'));
+  console.log(navigator.mozHasPendingMessage('pick'));
+});
+  </script>
+</body>
+</html>
+
