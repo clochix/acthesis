@@ -34,6 +34,7 @@ window.addEventListener('load', function () {
     activity.onsuccess = function() {
       console.log("Activity successfuly handled");
       console.log(this.result);
+      document.getElementById('url').value = '';
     }
     activity.onerror = function() {
       console.error("The activity encouter en error: " + this.error);
