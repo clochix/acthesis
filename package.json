@@ -5,6 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "body-parser": "^1.9.2",
+    "engine.io": "^1.4.2",
+    "engine.io-client": "^1.4.2",
     "express": "^4.10.2"
   },
   "devDependencies": {},
