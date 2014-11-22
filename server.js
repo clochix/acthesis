@@ -32,7 +32,7 @@ var providersName = {};
     });
     console.log(registered, providersName);
     if (typeof req.body.handler !== 'undefined') {
-      eventEmitter.on('activitySent', function (result) {
+      eventEmitter.once('activitySent', function (result) {
         res.status(200).json(result);
       });
       eventEmitter.emit('activityWaiting');
