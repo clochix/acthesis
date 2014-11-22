@@ -6,7 +6,7 @@
 </head>
 <body>
   <h1>Acthesis test - Client</h1>
-  <button id="action">Share</button>
+  <input type="text" id="url"><button id="action">Share</button>
   <script src="engine.io.js"></script>
   <script src="activity-common.js"></script>
   <script src="activity-client.js"></script>
@@ -25,7 +25,7 @@ window.addEventListener('load', function () {
     var activity = new MozActivity({
       name: "share",
       data: {
-        url: "http://clochix.net"
+        url: document.getElementById('url').value
       }
     });
     if (!(activity instanceof Request)) {

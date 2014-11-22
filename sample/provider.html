@@ -6,11 +6,15 @@
 </head>
 <body>
   <h1>Acthesis test - Provider</h1>
+  <h2>Shared URLS</h2>
+  <ul id="shared">
+  </ul>
   <script src="engine.io.js"></script>
   <script src="activity-common.js"></script>
   <script src="activity-client.js"></script>
   <script>
 window.addEventListener('load', function () {
+  var sharedList = document.getElementById('shared');
   if (typeof window.MozActivity === 'undefined') {
     var acthesis, options, description, handler, activityUrl;
     activityUrl = window.location.toString().split(/[\?#]/)[0];
@@ -28,11 +32,12 @@ window.addEventListener('load', function () {
           console.error("Message should be an ActivityRequestHandler");
         }
         console.log("Sharing", message);
-        message.postResult(message.source);
+        sharedList.innerHTML += "<li>" + message.source.url + "</li>";
+        message.postResult(message.source.url);
       }
     };
     navigator.setMessageHandler('share', handler);
-    acthesis.start();
+    acthesis.start('Test Provider');
   }
   //console.log(navigator.mozHasPendingMessage('share'));
   //console.log(navigator.mozHasPendingMessage('pick'));

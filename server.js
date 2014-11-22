@@ -21,11 +21,16 @@ var host = process.env.HOST || "127.0.0.1";
 app.use(express.static(__dirname + '/sample/'));
 
 var eventEmitter = new events.EventEmitter();
+var providersName = {};
 // Web Activities
 (function () {
   "use strict";
   app.post('/activity', function (req, res) {
-    var registered = activity.handleActivity(req.body, res);
+    var registered = activity.handleActivity(req.body, res).map(function (handler) {
+      handler.fullname = providersName[handler.href] || handler.href;
+      return handler;
+    });
+    console.log(registered, providersName);
     if (typeof req.body.handler !== 'undefined') {
       eventEmitter.on('activitySent', function (result) {
         res.status(200).json(result);
@@ -53,12 +58,14 @@ var httpServer = http.createServer(app).listen(port, host, function() {
 var server = engine.attach(httpServer);
 server.on('connection', function(socket){
   "use strict";
-  var provider;
+  var name, provider;
   socket.on('message', function(data){
     data = JSON.parse(data);
     console.log("GOT MESSAGE", data);
     if (data.type === 'providerUrl') {
-      provider = data.data;
+      name     = data.data.name;
+      provider = data.data.url;
+      providersName[provider] = name;
     }
     if (data.type === 'success' || data.type === 'error') {
         eventEmitter.emit('activitySent', data);
