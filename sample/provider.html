@@ -25,16 +25,14 @@ window.addEventListener('load', function () {
     acthesis = new Acthesis(options);
     description = new ActivityHandlerDescription('share', activityUrl, '', false, null);
     acthesis.registerActivityHandler(description);
-    handler = {
-      handleMessage: function (message) {
-        "use strict";
-        if (!(message instanceof ActivityRequestHandler)) {
-          console.error("Message should be an ActivityRequestHandler");
-        }
-        console.log("Sharing", message);
-        sharedList.innerHTML += "<li>" + message.source.url + "</li>";
-        message.postResult(message.source.url);
+    handler = function (message) {
+      "use strict";
+      if (!(message instanceof ActivityRequestHandler)) {
+        console.error("Message should be an ActivityRequestHandler");
       }
+      console.log("Sharing", message);
+      sharedList.innerHTML += "<li>" + message.source.url + "</li>";
+      message.postResult(message.source.url);
     };
     navigator.setMessageHandler('share', handler);
     acthesis.start('Test Provider');
