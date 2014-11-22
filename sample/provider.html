@@ -2,31 +2,40 @@
 <head>
   <meta charset=utf-8>
   <meta name="description" content="Acthesis test">
-  <title>Acthesis test</title>
+  <title>Acthesis test - Provider</title>
 </head>
 <body>
+  <h1>Acthesis test - Provider</h1>
+  <script src="engine.io.js"></script>
   <script src="activity-common.js"></script>
   <script src="activity-client.js"></script>
   <script>
 window.addEventListener('load', function () {
   if (typeof window.MozActivity === 'undefined') {
-    var acthesis, options, description;
-    var activityUrl = window.location.toString().split(/[\?#]/)[0];
+    var acthesis, options, description, handler, activityUrl;
+    activityUrl = window.location.toString().split(/[\?#]/)[0];
     options = {
-      server: window.location.protocol + "//" + window.location.host + "/activity"
+      server: window.location.protocol + "//" + window.location.host + "/activity",
+      ws: "ws://" + window.location.host
     };
     acthesis = new Acthesis(options);
     description = new ActivityHandlerDescription('share', activityUrl, '', false, null);
     acthesis.registerActivityHandler(description);
-    navigator.setMessageHandler('share', function (a) {
-      "use strict";
-      console.log("Sharing", a);
-      a.postResult(a.source);
-    });
+    handler = {
+      handleMessage: function (message) {
+        "use strict";
+        if (!(message instanceof ActivityRequestHandler)) {
+          console.error("Message should be an ActivityRequestHandler");
+        }
+        console.log("Sharing", message);
+        message.postResult(message.source);
+      }
+    };
+    navigator.setMessageHandler('share', handler);
     acthesis.start();
   }
-  console.log(navigator.mozHasPendingMessage('share'));
-  console.log(navigator.mozHasPendingMessage('pick'));
+  //console.log(navigator.mozHasPendingMessage('share'));
+  //console.log(navigator.mozHasPendingMessage('pick'));
 });
   </script>
 </body>

@@ -2,10 +2,12 @@
 <head>
   <meta charset=utf-8>
   <meta name="description" content="Acthesis test">
-  <title>Acthesis test</title>
+  <title>Acthesis test - Client</title>
 </head>
 <body>
+  <h1>Acthesis test - Client</h1>
   <button id="action">Share</button>
+  <script src="engine.io.js"></script>
   <script src="activity-common.js"></script>
   <script src="activity-client.js"></script>
   <script>
@@ -26,11 +28,16 @@ window.addEventListener('load', function () {
         url: "http://clochix.net"
       }
     });
+    if (!(activity instanceof Request)) {
+      console.log("Activity should be a DOMRequest instance");
+    }
     activity.onsuccess = function() {
       console.log("Activity successfuly handled");
+      console.log(this.result);
     }
     activity.onerror = function() {
-      console.log("The activity encouter en error: " + this.error);
+      console.error("The activity encouter en error: " + this.error);
+      console.log(this.error);
     }
   });
 });

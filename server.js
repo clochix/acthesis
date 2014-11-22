@@ -1,6 +1,8 @@
 //jshint node: true
 var express    = require('express'),
+    events     = require('events'),
     http       = require('http'),
+    engine     = require('engine.io'),
     bodyParser = require('body-parser'),
     activity   = require('./lib/activity-server');
 process.on('uncaughtException', function (err) {
@@ -18,27 +20,56 @@ var host = process.env.HOST || "127.0.0.1";
 // Serve static content
 app.use(express.static(__dirname + '/sample/'));
 
+var eventEmitter = new events.EventEmitter();
 // Web Activities
 (function () {
   "use strict";
   app.post('/activity', function (req, res) {
-    console.log(req.get('X-Requester'));
-    activity.handleActivity(req.body, res);
+    var registered = activity.handleActivity(req.body, res);
+    if (typeof req.body.handler !== 'undefined') {
+      eventEmitter.on('activitySent', function (result) {
+        res.status(200).json(result);
+      });
+      eventEmitter.emit('activityWaiting');
+    } else {
+      res.status(200).json(registered);
+    }
   });
   app.get('/activity/pending', function (req, res) {
     var pending = activity.hasPendingMessage(req);
     res.send(JSON.stringify({result: pending}));
   });
   app.post('/activity/register', function (req, res) {
-    console.log(req.get('X-Requester'));
     activity.registerActivityHandler(req.body);
     res.status(200).json({result: 'ok'});
   });
 }());
 
 // Starts the server itself
-http.createServer(app).listen(port, host, function() {
+var httpServer = http.createServer(app).listen(port, host, function() {
   "use strict";
   console.log("Server listening to %s:%d within %s environment", host, port, app.get('env'));
+});
+var server = engine.attach(httpServer);
+server.on('connection', function(socket){
+  "use strict";
+  var provider;
+  socket.on('message', function(data){
+    data = JSON.parse(data);
+    console.log("GOT MESSAGE", data);
+    if (data.type === 'providerUrl') {
+      provider = data.data;
+    }
+    if (data.type === 'success' || data.type === 'error') {
+        eventEmitter.emit('activitySent', data);
+    }
+  });
+  eventEmitter.on('activityWaiting', function () {
+    if (typeof provider === 'undefined') {
+      console.log('No provider');
+      return;
+    }
+    socket.send(JSON.stringify(activity.getPendingMessages(provider)));
+  });
 });
 
