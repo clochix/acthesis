@@ -13,9 +13,7 @@
   <script>
 window.addEventListener('load', function () {
   if (typeof window.MozActivity === 'undefined') {
-    var acthesis, description;
-    acthesis = new Acthesis();
-    acthesis.start();
+    new Acthesis();
   }
   document.getElementById('action').addEventListener('click', function () {
     var activity = new MozActivity({

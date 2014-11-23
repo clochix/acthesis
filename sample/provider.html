@@ -16,11 +16,19 @@
 window.addEventListener('load', function () {
   var sharedList = document.getElementById('shared');
   if (typeof window.MozActivity === 'undefined') {
-    var acthesis, options, description, handler;
-    acthesis = new Acthesis();
-    description = new ActivityHandlerDescription('share', null, null, true, null);
-    acthesis.registerActivityHandler(description);
-    acthesis.start();
+    var manifest = {
+      "activities": {
+        "share": {
+          "href": null,        // default to current URL
+          "disposition": 'inline', // 'window' (default) or 'inline'
+          "filters": {
+            "type": []         // @TODO
+          },
+          "returnValue": true
+        }
+      }
+    }
+    new Acthesis(null, manifest);
   }
   handler = function (message) {
     "use strict";
