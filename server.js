@@ -30,11 +30,14 @@ var providersName = {};
       handler.fullname = providersName[handler.href] || handler.href;
       return handler;
     });
-    console.log(registered, providersName);
     if (typeof req.body.handler !== 'undefined') {
-      eventEmitter.once('activitySent', function (result) {
-        res.status(200).json(result);
-      });
+      if (req.body.returnValue) {
+        eventEmitter.once('activitySent', function (result) {
+          res.status(200).json(result);
+        });
+      } else {
+        res.status(200).json({result: 'ok'});
+      }
       eventEmitter.emit('activityWaiting');
     } else {
       res.status(200).json(registered);
