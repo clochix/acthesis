@@ -16,27 +16,22 @@
 window.addEventListener('load', function () {
   var sharedList = document.getElementById('shared');
   if (typeof window.MozActivity === 'undefined') {
-    var acthesis, options, description, handler, activityUrl;
-    activityUrl = window.location.toString().split(/[\?#]/)[0];
-    options = {
-      server: window.location.protocol + "//" + window.location.host + "/activity",
-      ws: "ws://" + window.location.host
-    };
-    acthesis = new Acthesis(options);
-    description = new ActivityHandlerDescription('share', activityUrl, '', false, null);
+    var acthesis, options, description, handler;
+    acthesis = new Acthesis();
+    description = new ActivityHandlerDescription('share', null, null, true, null);
     acthesis.registerActivityHandler(description);
-    handler = function (message) {
-      "use strict";
-      if (!(message instanceof ActivityRequestHandler)) {
-        console.error("Message should be an ActivityRequestHandler");
-      }
-      console.log("Sharing", message);
-      sharedList.innerHTML += "<li>" + message.source.url + "</li>";
-      message.postResult(message.source.url);
-    };
-    navigator.setMessageHandler('share', handler);
-    acthesis.start('Test Provider');
+    acthesis.start();
   }
+  handler = function (message) {
+    "use strict";
+    if (!(message instanceof ActivityRequestHandler)) {
+      console.error("Message should be an ActivityRequestHandler");
+    }
+    console.log("Sharing", message);
+    sharedList.innerHTML += "<li>" + message.source.url + "</li>";
+    message.postResult(message.source.url);
+  };
+  navigator.setMessageHandler('share', handler);
   //console.log(navigator.mozHasPendingMessage('share'));
   //console.log(navigator.mozHasPendingMessage('pick'));
 });

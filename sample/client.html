@@ -13,12 +13,8 @@
   <script>
 window.addEventListener('load', function () {
   if (typeof window.MozActivity === 'undefined') {
-    var acthesis, options, description;
-    var activityUrl = window.location.protocol + "//" + window.location.host + "/#activity/share"
-    options = {
-      server: window.location.protocol + "//" + window.location.host + "/activity"
-    };
-    acthesis = new Acthesis(options);
+    var acthesis, description;
+    acthesis = new Acthesis();
     acthesis.start();
   }
   document.getElementById('action').addEventListener('click', function () {
