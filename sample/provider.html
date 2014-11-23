@@ -9,8 +9,11 @@
   <h2>Shared URLS</h2>
   <ul id="shared">
   </ul>
+  <div>
+    <button id="actionOk">OK</button>
+    <button id="actionKo">KO</button>
+  </div>
   <script src="engine.io.js"></script>
-  <script src="activity-common.js"></script>
   <script src="activity-client.js"></script>
   <script>
 window.addEventListener('load', function () {
@@ -20,7 +23,7 @@ window.addEventListener('load', function () {
       "activities": {
         "share": {
           "href": null,        // default to current URL
-          "disposition": 'inline', // 'window' (default) or 'inline'
+          "disposition": null, // 'window' (default) or 'inline'
           "filters": {
             "type": []         // @TODO
           },
@@ -30,6 +33,8 @@ window.addEventListener('load', function () {
     }
     new Acthesis(null, manifest);
   }
+  actionOk = document.getElementById('actionOk');
+  actionKo = document.getElementById('actionKo');
   handler = function (message) {
     "use strict";
     if (!(message instanceof ActivityRequestHandler)) {
@@ -37,11 +42,27 @@ window.addEventListener('load', function () {
     }
     console.log("Sharing", message);
     sharedList.innerHTML += "<li>" + message.source.url + "</li>";
-    message.postResult(message.source.url);
+    function ok () {
+      message.postResult(message.source.url);
+      actionOk.removeEventListener('click', ok);
+      actionKo.removeEventListener('click', ko);
+      window.close();
+    }
+    function ko () {
+      message.postError("USER CANCELED");
+      actionOk.removeEventListener('click', ok);
+      actionKo.removeEventListener('click', ko);
+      window.close();
+    }
+    actionOk.addEventListener('click', ok);
+    actionKo.addEventListener('click', ko);
   };
   navigator.setMessageHandler('share', handler);
-  //console.log(navigator.mozHasPendingMessage('share'));
-  //console.log(navigator.mozHasPendingMessage('pick'));
+  if (navigator.mozHasPendingMessage('share')) {
+    console.log("PENDING");
+  } else {
+    console.log("Nothing pending");
+  }
 });
   </script>
 </body>

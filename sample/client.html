@@ -8,7 +8,6 @@
   <h1>Acthesis test - Client</h1>
   <input type="text" id="url"><button id="action">Share</button>
   <script src="engine.io.js"></script>
-  <script src="activity-common.js"></script>
   <script src="activity-client.js"></script>
   <script>
 window.addEventListener('load', function () {
@@ -22,9 +21,6 @@ window.addEventListener('load', function () {
         url: document.getElementById('url').value
       }
     });
-    if (!(activity instanceof Request)) {
-      console.log("Activity should be a DOMRequest instance");
-    }
     activity.onsuccess = function() {
       console.log("Activity successfuly handled");
       console.log(this.result);

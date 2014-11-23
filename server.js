@@ -26,17 +26,25 @@ var providersName = {};
 (function () {
   "use strict";
   app.post('/activity', function (req, res) {
-    var registered = activity.handleActivity(req.body, res).map(function (handler) {
+    var registered, choosen, timeout;
+    registered = activity.handleActivity(req.body, res).map(function (handler) {
       handler.fullname = providersName[handler.href] || handler.href;
       return handler;
     });
     if (typeof req.body.handler !== 'undefined') {
-      if (req.body.returnValue) {
+      choosen = registered.filter(function (handler) {
+        return handler.href === req.body.handler;
+      })[0];
+      if (choosen.returnValue) {
+        timeout = setTimeout(function () {
+          eventEmitter.emit('activitySent', {type: 'error', data: "TIMEOUT"});
+        }, 30000);
         eventEmitter.once('activitySent', function (result) {
+          clearTimeout(timeout);
           res.status(200).json(result);
         });
       } else {
-        res.status(200).json({result: 'ok'});
+        res.status(200).json({result: 'done'});
       }
       eventEmitter.emit('activityWaiting');
     } else {
@@ -48,8 +56,22 @@ var providersName = {};
     res.send(JSON.stringify({result: pending}));
   });
   app.post('/activity/register', function (req, res) {
-    activity.registerActivityHandler(req.body);
-    res.status(200).json({result: 'ok'});
+    var domRequest = activity.registerActivityHandler(req.body);
+    domRequest.onsuccess = function () {
+      res.status(200).json({result: 'ok'});
+    };
+    domRequest.onerror = function () {
+      res.status(500).json({result: 'ko'});
+    };
+  });
+  app.post('/activity/unregister', function (req, res) {
+    var domRequest = activity.unregisterActivityHandler(req.body);
+    domRequest.onsuccess = function () {
+      res.status(200).json({result: 'ok'});
+    };
+    domRequest.onerror = function () {
+      res.status(500).json({result: 'ko'});
+    };
   });
 }());
 
@@ -62,6 +84,13 @@ var server = engine.attach(httpServer);
 server.on('connection', function(socket){
   "use strict";
   var name, provider;
+  function sendPending() {
+    var pending = activity.getPendingMessages(provider);
+    if (typeof pending !== 'undefined') {
+      console.log("Sending ", pending);
+      socket.send(JSON.stringify(pending));
+    }
+  }
   socket.on('message', function(data){
     data = JSON.parse(data);
     console.log("GOT MESSAGE", data);
@@ -71,7 +100,11 @@ server.on('connection', function(socket){
       providersName[provider] = name;
     }
     if (data.type === 'success' || data.type === 'error') {
+        activity.deletePendingMessages(provider);
         eventEmitter.emit('activitySent', data);
+    }
+    if (data.type === 'getPending') {
+      sendPending();
     }
   });
   eventEmitter.on('activityWaiting', function () {
@@ -79,7 +112,7 @@ server.on('connection', function(socket){
       console.log('No provider');
       return;
     }
-    socket.send(JSON.stringify(activity.getPendingMessages(provider)));
+    sendPending();
   });
 });
 
