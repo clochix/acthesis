@@ -17,20 +17,27 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 9250;
 var host = process.env.HOST || "127.0.0.1";
 
-// Serve static content
-app.use(express.static(__dirname + '/sample/'));
+// Serve samples
+if (process.env.SAMPLE) {
+  app.use(express.static(__dirname + '/sample/'));
+}
+
+// Enable CORS
+app.use(function(req, res, next) {
+  "use strict";
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Requester");
+  next();
+});
 
 var eventEmitter = new events.EventEmitter();
-var providersName = {};
 // Web Activities
 (function () {
   "use strict";
   app.post('/activity', function (req, res) {
     var registered, choosen, timeout;
-    registered = activity.handleActivity(req.body, res).map(function (handler) {
-      handler.fullname = providersName[handler.href] || handler.href;
-      return handler;
-    });
+    registered = activity.handleActivity(req.body, res);
     if (typeof req.body.handler !== 'undefined') {
       choosen = registered.filter(function (handler) {
         return handler.href === req.body.handler;
@@ -44,7 +51,7 @@ var providersName = {};
           res.status(200).json(result);
         });
       } else {
-        res.status(200).json({result: 'done'});
+        res.status(200).json({type: 'success'});
       }
       eventEmitter.emit('activityWaiting');
     } else {
@@ -83,21 +90,19 @@ var httpServer = http.createServer(app).listen(port, host, function() {
 var server = engine.attach(httpServer);
 server.on('connection', function(socket){
   "use strict";
-  var name, provider;
+  var provider;
   function sendPending() {
     var pending = activity.getPendingMessages(provider);
     if (typeof pending !== 'undefined') {
-      console.log("Sending ", pending);
+      //console.log("Sending ", pending);
       socket.send(JSON.stringify(pending));
     }
   }
   socket.on('message', function(data){
     data = JSON.parse(data);
-    console.log("GOT MESSAGE", data);
+    //console.log("GOT MESSAGE", data);
     if (data.type === 'providerUrl') {
-      name     = data.data.name;
       provider = data.data.url;
-      providersName[provider] = name;
     }
     if (data.type === 'success' || data.type === 'error') {
         activity.deletePendingMessages(provider);
