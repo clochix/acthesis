@@ -51,6 +51,7 @@ var eventEmitter = new events.EventEmitter();
           res.status(200).json(result);
         });
       } else {
+        activity.deletePendingMessages(choosen.href);
         res.status(200).json({type: 'success'});
       }
       eventEmitter.emit('activityWaiting');
@@ -92,6 +93,10 @@ server.on('connection', function(socket){
   "use strict";
   var provider;
   function sendPending() {
+    if (typeof provider === 'undefined') {
+      console.log('No provider');
+      return;
+    }
     var pending = activity.getPendingMessages(provider);
     if (typeof pending !== 'undefined') {
       //console.log("Sending ", pending);
@@ -112,12 +117,9 @@ server.on('connection', function(socket){
       sendPending();
     }
   });
-  eventEmitter.on('activityWaiting', function () {
-    if (typeof provider === 'undefined') {
-      console.log('No provider');
-      return;
-    }
-    sendPending();
+  eventEmitter.on('activityWaiting', sendPending);
+  socket.on('disconnect', function () {
+    eventEmitter.removeListener('activityWaiting', sendPending);
   });
 });
 
