@@ -22,12 +22,12 @@ window.addEventListener('load', function () {
       }
     });
     activity.onsuccess = function() {
-      console.log("Activity successfuly handled");
-      console.log(this.result);
+      console.log("[client] Activity successfuly handled");
+      console.log('[client]', this.result);
       document.getElementById('url').value = '';
     }
     activity.onerror = function() {
-      console.error("The activity got an error: " + this.error);
+      console.error("[client] The activity got an error: " + this.error);
       console.log(this.error);
     }
   });

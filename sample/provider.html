@@ -31,16 +31,19 @@ window.addEventListener('load', function () {
         }
       }
     }
-    new Acthesis(null, manifest);
+    var options = {
+      postMethod: "message"
+    };
+    new Acthesis(options, manifest);
   }
   actionOk = document.getElementById('actionOk');
   actionKo = document.getElementById('actionKo');
   handler = function (message) {
     "use strict";
     if (!(message instanceof ActivityRequestHandler)) {
-      console.error("Message should be an ActivityRequestHandler");
+      console.error("[provider] Message should be an ActivityRequestHandler");
     }
-    console.log("Sharing", message);
+    console.log("[provider] Sharing", message);
     sharedList.innerHTML += "<li>" + message.source.url + "</li>";
     function ok () {
       message.postResult(message.source.url);
@@ -57,11 +60,11 @@ window.addEventListener('load', function () {
     actionOk.addEventListener('click', ok);
     actionKo.addEventListener('click', ko);
   };
-  navigator.setMessageHandler('share', handler);
+  navigator.mozSetMessageHandler('share', handler);
   if (navigator.mozHasPendingMessage('share')) {
-    console.log("PENDING");
+    console.log("[provider] PENDING");
   } else {
-    console.log("Nothing pending");
+    console.log("[provider] Nothing pending");
   }
 });
   </script>

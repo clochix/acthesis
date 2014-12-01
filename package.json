@@ -2,7 +2,7 @@
   "name": "Acthesis",
   "version": "0.0.0",
   "description": " A prothesis (polyfill) for Web user agent currently not suporting Web Activities ",
-  "main": "index.js",
+  "main": "lib/index.js",
   "dependencies": {
     "body-parser": "^1.9.2",
     "engine.io": "^1.4.2",
