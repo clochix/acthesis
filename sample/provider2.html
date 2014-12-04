@@ -2,10 +2,10 @@
 <head>
   <meta charset=utf-8>
   <meta name="description" content="Acthesis test">
-  <title>Acthesis test - Provider</title>
+  <title>Acthesis test - Provider share with filters</title>
 </head>
 <body>
-  <h1>Acthesis test - Provider</h1>
+  <h1>Acthesis test - Provider share with filters</h1>
   <h2>Shared URLS</h2>
   <ul id="shared">
   </ul>
@@ -25,7 +25,7 @@ window.addEventListener('load', function () {
           "href": null,        // default to current URL
           "disposition": 'inline', // 'window' (default) or 'inline'
           "filters": {
-            "type": []         // @TODO
+            "type": ["image/*","image/jpeg","image/png"]
           },
           "returnValue": true
         }
