@@ -12,6 +12,7 @@ process.on('uncaughtException', function (err) {
 
 var app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
 var port = process.env.PORT || 9250;
 var host = process.env.HOST || "127.0.0.1";
 

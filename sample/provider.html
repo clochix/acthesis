@@ -13,6 +13,9 @@
     <button id="actionOk">OK</button>
     <button id="actionKo">KO</button>
   </div>
+  <div>
+    <input id="version"><button id="push">push</button>
+  </div>
   <script src="engine.io.js"></script>
   <script src="activity-client.js"></script>
   <script>
@@ -32,7 +35,7 @@ window.addEventListener('load', function () {
       }
     }
     var options = {
-      postMethod: "message"
+      postMethod: "socket"
     };
     new Acthesis(options, manifest);
   }
@@ -66,6 +69,41 @@ window.addEventListener('load', function () {
   } else {
     console.log("[provider] Nothing pending");
   }
+
+  // {{
+  function registerPush() {
+    var req = navigator.push.register();
+
+    req.onsuccess = function(e) {
+      var endpoint = req.result;
+      console.log("New endpoint: " + endpoint);
+      document.getElementById('push').addEventListener('click', function () {
+        var xhr = new XMLHttpRequest(),
+            params = "version=" + document.getElementById('version').value;
+        xhr.open("PUT", endpoint, true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-length", params.length);
+        xhr.send(params);
+      }, false);
+    }
+
+    req.onerror = function(e) {
+      console.error("Error getting a new endpoint: " + JSON.stringify(e));
+    }
+  }
+  if (navigator.push) {
+    registerPush();
+  }
+  navigator.mozSetMessageHandler('push', function(e) {
+    console.log('My endpoint is ' + e.pushEndpoint);
+    console.log('My new version is ' +  e.version);
+  });
+  navigator.mozSetMessageHandler('push-register', function(e) {
+    console.log('push-register received, I need to register my endpoint(s) again!');
+    registerPush();
+  });
+
+  // }}
 });
   </script>
 </body>
