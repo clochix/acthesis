@@ -16,6 +16,10 @@
   <div>
     <input id="version"><button id="push">push</button>
   </div>
+  <div>
+    <button id="alarmAdd">alarmAdd</button>
+    <button id="alarmGet">alarmGet</button>
+  </div>
   <script src="engine.io.js"></script>
   <script src="activity-client.js"></script>
   <script>
@@ -103,6 +107,44 @@ window.addEventListener('load', function () {
     registerPush();
   });
 
+  // }}
+
+  // Alarms {{
+  document.getElementById('alarmAdd').addEventListener('click', function (){
+    var alarm = {
+      date: new Date("July 27, 2013 20:00:00"),
+      respectTimezone: 'ignoreTimezone',
+      data: {
+        message: "Do something dude!"
+      }
+    };
+
+    var request = navigator.mozAlarms.add(alarm.date, alarm.respectTimezone, alarm.data);
+
+    request.onsuccess = function () {
+      console.log('A new alarm has been set:' + this.result);
+      alarm.id = this.result; // get the id of the new alarm.
+    }
+
+    request.onerror = function () {
+      console.log('operation failed: ' + this.error);
+    }
+  });
+  document.getElementById('alarmGet').addEventListener('click', function (){
+    var request = navigator.mozAlarms.getAll();
+
+    request.onsuccess = function () {
+      console.log('operation successful:' + this.result.length + 'alarms pending');
+
+      this.result.forEach(function (alarm) {
+        console.log(alarm.id + ' : ' + alarm.date.toString() + ' : ' + alarm.respectTimezone);    
+      });
+    }
+
+    request.onerror = function () {
+      console.log('operation failed: ' + this.error);
+    }
+  });
   // }}
 });
   </script>
