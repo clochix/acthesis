@@ -7,7 +7,8 @@
     "body-parser": "^1.9.2",
     "engine.io": "^1.4.2",
     "engine.io-client": "^1.4.2",
-    "express": "^4.10.2"
+    "express": "^4.10.2",
+    "node-schedule": "^0.1.13"
   },
   "devDependencies": {},
   "scripts": {
