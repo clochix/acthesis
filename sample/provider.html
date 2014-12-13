@@ -69,9 +69,9 @@ window.addEventListener('load', function () {
   };
   navigator.mozSetMessageHandler('activity', handler);
   if (navigator.mozHasPendingMessage('activity')) {
-    console.log("[provider] PENDING");
+    console.log("[provider] PENDING activities");
   } else {
-    console.log("[provider] Nothing pending");
+    console.log("[provider] No pending activities");
   }
 
   // {{
@@ -122,7 +122,7 @@ window.addEventListener('load', function () {
     var request = navigator.mozAlarms.add(alarm.date, alarm.respectTimezone, alarm.data);
 
     request.onsuccess = function () {
-      console.log('A new alarm has been set:' + this.result);
+      console.log('A new alarm has been set: ' + this.result);
       alarm.id = this.result; // get the id of the new alarm.
     }
 
@@ -134,7 +134,7 @@ window.addEventListener('load', function () {
     var request = navigator.mozAlarms.getAll();
 
     request.onsuccess = function () {
-      console.log('operation successful:' + this.result.length + 'alarms pending');
+      console.log('operation successful: ' + this.result.length + ' alarms pending');
 
       this.result.forEach(function (alarm) {
         console.log(alarm.id + ' : ' + alarm.date.toString() + ' : ' + alarm.respectTimezone);
@@ -148,6 +148,11 @@ window.addEventListener('load', function () {
   navigator.mozSetMessageHandler('alarm', function(e) {
     console.log("Got an alarm ! ", e)
   });
+  if (navigator.mozHasPendingMessage('alarm')) {
+    console.log("[provider] PENDING alarms");
+  } else {
+    console.log("[provider] No pending alarms");
+  }
   // }}
 });
   </script>
