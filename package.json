@@ -1,6 +1,6 @@
 {
-  "name": "Acthesis",
-  "version": "0.0.0",
+  "name": "acthesis",
+  "version": "0.1.0",
   "description": " A prothesis (polyfill) for Web user agent currently not suporting Web Activities ",
   "main": "lib/index.js",
   "dependencies": {
