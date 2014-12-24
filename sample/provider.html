@@ -51,9 +51,9 @@ window.addEventListener('load', function () {
       console.error("[provider] Message should be an ActivityRequestHandler");
     }
     console.log("[provider] Sharing", message);
-    sharedList.innerHTML += "<li>" + message.source.url + "</li>";
+    sharedList.innerHTML += "<li>" + message.source.data.url + "</li>";
     function ok () {
-      message.postResult(message.source.url);
+      message.postResult(message.source.data.url);
       actionOk.removeEventListener('click', ok);
       actionKo.removeEventListener('click', ko);
       //window.close();
