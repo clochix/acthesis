@@ -12,8 +12,8 @@ process.on('uncaughtException', function (err) {
 });
 
 app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json({limit: '10mb'}));
+app.use(bodyParser.urlencoded({limit: '10mb', extended: false}));
 port = process.env.PORT || 9250;
 host = process.env.HOST || "127.0.0.1";
 
