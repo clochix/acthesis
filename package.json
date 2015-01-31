@@ -1,6 +1,6 @@
 {
   "name": "acthesis",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": " A prothesis (polyfill) for Web user agent currently not suporting Web Activities ",
   "main": "lib/index.js",
   "dependencies": {
@@ -11,7 +11,9 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node server.js > server.log &",
+    "sampleserver": "SAMPLE=true node server.js > server.log &"
   },
   "repository": {
     "type": "git",
