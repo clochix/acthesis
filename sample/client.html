@@ -6,17 +6,56 @@
 </head>
 <body>
   <h1>Acthesis test - Client</h1>
-  <input type="text" id="url"><button id="action">Share</button>
+  <input type="text" id="url">
+  <button id="share">Share</button>
+  <button id="pick">Pick</button>
+  <button id="save">Save</button>
+  <!--
   <script src="engine.io.js"></script>
+  -->
   <script src="activity-client.js"></script>
   <script>
 window.addEventListener('load', function () {
   if (typeof window.MozActivity === 'undefined') {
     new Acthesis();
   }
-  document.getElementById('action').addEventListener('click', function () {
+  document.getElementById('share').addEventListener('click', function () {
     var activity = new MozActivity({
       name: "share",
+      data: {
+        url: document.getElementById('url').value
+      }
+    });
+    activity.onsuccess = function() {
+      console.log("[client] Activity successfuly handled");
+      console.log('[client]', this.result);
+      document.getElementById('url').value = '';
+    }
+    activity.onerror = function() {
+      console.error("[client] The activity got an error: " + this.error);
+      console.log(this.error);
+    }
+  });
+  document.getElementById('pick').addEventListener('click', function () {
+    var activity = new MozActivity({
+      name: "pick",
+      data: {
+        url: document.getElementById('url').value
+      }
+    });
+    activity.onsuccess = function() {
+      console.log("[client] Activity successfuly handled");
+      console.log('[client]', this.result);
+      document.getElementById('url').value = '';
+    }
+    activity.onerror = function() {
+      console.error("[client] The activity got an error: " + this.error);
+      console.log(this.error);
+    }
+  });
+  document.getElementById('save').addEventListener('click', function () {
+    var activity = new MozActivity({
+      name: "save",
       data: {
         url: document.getElementById('url').value
       }
