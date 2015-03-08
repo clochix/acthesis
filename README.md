@@ -42,7 +42,7 @@ Manifest is only needed for activity providers. The syntax is the same as in [Fi
       "activities": {
         "share": {
           "href": null,            // default to current URL
-          "disposition": 'inline', // 'window' (default) or 'inline'
+          "disposition": 'inline', // 'window' (default), 'inline' or 'hidden'
           "filters": {
             "type": ["image/*","image/jpeg","image/png"]
           },
@@ -50,6 +50,11 @@ Manifest is only needed for activity providers. The syntax is the same as in [Fi
         }
       }
     }
+
+Disposition:
+ - `window`: the provider will be opened in a new browser window. Pop-up blocking may prevent this to work;
+ - `inline`: the provider will be opened in an iframe inside a popin;
+ - `hidden`: the provider will be opened inside a hidden iframe. Useful if no interaction is needed;
 
 This application provide a `share` activity accepting images. It means other applications can send it pictures.
 
